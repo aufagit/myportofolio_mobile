@@ -56,3 +56,18 @@ AI Disclosure
 Saya memakai Gemini, saya berdiskusi dengan gemini terkait dengan penjelasan penggantian warna, syntax dart dan juga beberapa materi seputar pertanyaan reflektif
 
 Chat log AI: https://share.gemini.google/5dlrfJxrNJMY
+
+
+### Tugas 8
+1. Navigator.push() menambahkan halaman baru ke navigation stack, Navigator.pushReplacement() mengganti halaman yang sedang aktif, sedangkan Navigator.pop() menutup halaman atau dialog untuk kembali ke sebelumnya. Pada aplikasi saya, kartu Tambah Pengalaman menggunakan Navigator.push() untuk membuka formulir, sementara opsi Home pada drawer menggunakan Navigator.pushReplacement() untuk kembali ke halaman utama.
+
+2. Scaffold menyediakan struktur dasar halaman, AppBar menampilkan judul, dan Drawer menyediakan menu navigasi. Penggunaan ketiganya membuat tampilan dan navigasi antarahalaman tetap konsisten. Contohnya, warna indigo digunakan pada AppBar halaman utama dan formulir serta header Drawer.
+
+3. Formulir menggunakan Column agar input tersusun vertikal dan mudah diisi secara berurutan. Padding digunakan untuk memberi jarak antarelemen, sedangkan SingleChildScrollView memungkinkan formulir digulir saat layar sempit atau keyboard muncul, sehingga seluruh input dan tombol Simpan tetap dapat diakses.
+
+4. `GlobalKey<FormState>` digunakan untuk mengakses state formulir, sedangkan validator memeriksa setiap input saat validate() dipanggil melalui tombol Simpan. Jika ada input tidak valid, pesan kesalahan muncul dan dialog tidak ditampilkan. Contohnya, nama organisasi yang hanya berisi spasi akan ditolak. Jenis input atau keyboard saja tidak cukup karena tidak menjamin isi data sudah sesuai aturan validasi.
+
+AI Disclosure
+Saya memakai Gemini, saya berdiskuusi terkait pertanyaan reflektif dan penjelasannya dan template pengisian form untuk atribut start date dan end date
+Chat log AI: https://share.gemini.google/94TGl4e49Qfy
+
