@@ -1,4 +1,3 @@
-
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
@@ -6,8 +5,7 @@ class ExperienceFormPage extends StatefulWidget {
   const ExperienceFormPage({super.key});
 
   @override
-  State<ExperienceFormPage> createState() =>
-      _ExperienceFormPageState();
+  State<ExperienceFormPage> createState() => _ExperienceFormPageState();
 }
 
 class _ExperienceFormPageState extends State<ExperienceFormPage> {
@@ -74,9 +72,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text('Add Experience Form'),
-        ),
+        title: const Center(child: Text('Add Experience Form')),
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
@@ -87,7 +83,6 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               // === Organization Name ===
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -153,10 +148,8 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   initialValue: _experienceType,
                   items: _experienceTypes
                       .map(
-                        (type) => DropdownMenuItem(
-                          value: type,
-                          child: Text(type),
-                        ),
+                        (type) =>
+                            DropdownMenuItem(value: type, child: Text(type)),
                       )
                       .toList(),
                   onChanged: (String? newValue) {
@@ -253,8 +246,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                       return "Tanggal selesai wajib dipilih!";
                     }
 
-                    if (_startDate != null &&
-                        _endDate!.isBefore(_startDate!)) {
+                    if (_startDate != null && _endDate!.isBefore(_startDate!)) {
                       return "Tanggal selesai tidak boleh sebelum tanggal mulai!";
                     }
 
@@ -270,8 +262,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStateProperty.all(Colors.indigo),
+                      backgroundColor: WidgetStateProperty.all(Colors.indigo),
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
@@ -285,21 +276,12 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                               content: SingleChildScrollView(
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      'Organisasi: $_organization',
-                                    ),
-                                    Text(
-                                      'Posisi: $_position',
-                                    ),
-                                    Text(
-                                      'Jenis: $_experienceType',
-                                    ),
-                                    Text(
-                                      'Deskripsi: $_description',
-                                    ),
+                                    Text('Organisasi: $_organization'),
+                                    Text('Posisi: $_position'),
+                                    Text('Jenis: $_experienceType'),
+                                    Text('Deskripsi: $_description'),
                                     Text(
                                       'Tanggal Mulai: ${_formatDate(_startDate!)}',
                                     ),
@@ -329,7 +311,6 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   ),
                 ),
               ),
-
             ],
           ),
         ),
