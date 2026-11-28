@@ -14,6 +14,7 @@ class MyHomePage extends StatelessWidget {
     ItemHomepage("Lihat Edukasi", Icons.folder, Colors.green),
     ItemHomepage("Tambah Edukasi", Icons.add_circle, Colors.red),
     ItemHomepage("Logout", Icons.logout, Colors.blueAccent),
+    ItemHomepage("Lihat Pengalaman", Icons.work_outline, Colors.orange),
     ItemHomepage("Tambah Pengalaman", Icons.work, Colors.deepPurple),
   ];
 
