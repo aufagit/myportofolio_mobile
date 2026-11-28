@@ -3,6 +3,7 @@ import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/education_list_screen.dart';
+import 'package:myportofolio_mobile/screens/experience_list_screen.dart';
 import 'package:myportofolio_mobile/services/auth_state.dart';
 import 'package:myportofolio_mobile/widgets/auth_guard.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +29,17 @@ class ItemCard extends StatelessWidget {
               ),
             );
 
-          if (item.name == "Tambah Edukasi") {
+          // === Lihat Edukasi ===
+          if (item.name == "Lihat Edukasi") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const EducationListScreen(),
+              ),
+            );
+          }
+          // === Tambah Edukasi ===
+          else if (item.name == "Tambah Edukasi") {
             final loggedIn = await ensureLoggedIn(context);
 
             if (!context.mounted || !loggedIn) return;
@@ -37,21 +48,31 @@ class ItemCard extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const ProjectFormPage()),
             );
-          } else if (item.name == "Tambah Pengalaman") {
+          }
+          // === Lihat Pengalaman ===
+          else if (item.name == "Lihat Pengalaman") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ExperienceListScreen(),
+              ),
+            );
+          }
+          // === Tambah Pengalaman ===
+          else if (item.name == "Tambah Pengalaman") {
+            final loggedIn = await ensureLoggedIn(context);
+
+            if (!context.mounted || !loggedIn) return;
+
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const ExperienceFormPage(),
               ),
             );
-          } else if (item.name == "Lihat Edukasi") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const EducationListScreen(),
-              ),
-            );
-          } else if (item.name == "Logout") {
+          }
+          // === Logout ===
+          else if (item.name == "Logout") {
             final auth = context.read<AuthState>();
 
             if (auth.isLoggedIn) {

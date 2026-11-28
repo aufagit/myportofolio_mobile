@@ -1,5 +1,11 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
+import 'package:myportofolio_mobile/models/experience.dart';
+import 'package:myportofolio_mobile/services/api_client.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:myportofolio_mobile/screens/experience_list_screen.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
+import 'package:provider/provider.dart';
 
 class ExperienceFormPage extends StatefulWidget {
   const ExperienceFormPage({super.key});
@@ -15,11 +21,12 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
   String _organization = "";
   String _position = "";
   String _description = "";
-  String _experienceType = "Organisasi";
+  String _experienceType = "full-time";
 
   // Variabel untuk menyimpan tanggal
   DateTime? _startDate;
   DateTime? _endDate;
+  bool _isSubmitting = false;
 
   // Controller khusus input tanggal
   final _startDateController = TextEditingController();
@@ -27,11 +34,12 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
 
   // Pilihan jenis pengalaman
   final List<String> _experienceTypes = [
-    'Organisasi',
-    'Magang',
-    'Volunteer',
-    'Kompetisi',
-    'Lainnya',
+    'internship',
+    'research',
+    'volunteer',
+    'part-time',
+    'full-time',
+    'freelance',
   ];
 
   // Mengubah tanggal menjadi teks
@@ -58,6 +66,99 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
           _endDateController.text = _formatDate(selectedDate);
         }
       });
+    }
+  }
+
+  // === Submit Form ===
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final loggedIn = await ensureLoggedIn(context);
+
+    if (!mounted || !loggedIn) return;
+
+    final auth = context.read<AuthState>();
+    final token = auth.token;
+
+    if (token == null) return;
+
+    final newExperience = Experience(
+      title: _position.trim(),
+      organization: _organization.trim(),
+      description: _description.trim(),
+      category: _experienceType,
+      startedAt: _startDate!,
+      endedAt: _endDate,
+    );
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final experience = await context.read<ApiClient>().createExperience(
+        newExperience,
+        token: token,
+      );
+
+      if (!mounted) return;
+
+      await showDialog<void>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Pengalaman berhasil ditambahkan!'),
+            content: Text('${experience.title}\n${experience.organization}'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ExperienceListScreen()),
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+
+      if (e.statusCode == 401) {
+        await auth.logout();
+
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sesi berakhir, silakan login kembali.'),
+          ),
+        );
+
+        await ensureLoggedIn(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save: ${e.statusCode}')),
+        );
+      }
+    } catch (_) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to connect to the server.')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
   }
 
@@ -232,7 +333,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   readOnly: true,
                   decoration: InputDecoration(
                     hintText: "Pilih tanggal selesai",
-                    labelText: "Tanggal Selesai",
+                    labelText: "Tanggal Selesai (Opsional)",
                     suffixIcon: const Icon(Icons.calendar_today),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
@@ -242,11 +343,9 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                     _selectDate(false);
                   },
                   validator: (String? value) {
-                    if (_endDate == null) {
-                      return "Tanggal selesai wajib dipilih!";
-                    }
-
-                    if (_startDate != null && _endDate!.isBefore(_startDate!)) {
+                    if (_startDate != null &&
+                        _endDate != null &&
+                        _endDate!.isBefore(_startDate!)) {
                       return "Tanggal selesai tidak boleh sebelum tanggal mulai!";
                     }
 
@@ -261,53 +360,18 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(Colors.indigo),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.indigo,
+                      foregroundColor: Colors.white,
                     ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text(
-                                'Pengalaman berhasil ditambahkan!',
-                              ),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Organisasi: $_organization'),
-                                    Text('Posisi: $_position'),
-                                    Text('Jenis: $_experienceType'),
-                                    Text('Deskripsi: $_description'),
-                                    Text(
-                                      'Tanggal Mulai: ${_formatDate(_startDate!)}',
-                                    ),
-                                    Text(
-                                      'Tanggal Selesai: ${_formatDate(_endDate!)}',
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                    },
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    onPressed: _isSubmitting ? null : _submit,
+                    child: _isSubmitting
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Save'),
                   ),
                 ),
               ),
