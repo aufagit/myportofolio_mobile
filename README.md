@@ -1,3 +1,6 @@
+[![CI](https://github.com/aufagit/myportofolio_mobile/actions/workflows/main.yaml/badge.svg)](https://github.com/aufagit/myportofolio_mobile/actions/workflows/main.yaml)
+
+
 MyPortfolio Mobile
 
 MyPortfolio Mobile merupakan aplikasi portofolio pribadi yang dikembangkan menggunakan Flutter dan Dart sebagai bagian dari mata kuliah Pemrograman Berbasis Platform (PBP) di Fakultas Ilmu Komputer Universitas Indonesia.
@@ -10,17 +13,42 @@ NPM: 2506656500
 
 Kelas: PBP D
 
-Cara Menjalankan Aplikasi
+## Cara Menjalankan Aplikasi
 
-Pastikan Flutter SDK sudah terpasang dan terkonfigurasi dengan benar.
+Pastikan Flutter SDK dan backend Django sudah terpasang dan dikonfigurasi.
 
-Clone repository dan masuk ke folder proyek.
+Repositori backend Django: [MyPortfolio Django](LINK_REPOSITORI_DJANGO)
 
-Jalankan flutter pub get untuk menyiapkan dependensi.
+Jalankan server Django:
 
-Jalankan flutter run -d chrome untuk membuka aplikasi melalui Google Chrome.
+```bash
+python manage.py runserver
+```
 
-Jalankan flutter analyze untuk memeriksa kualitas kode.
+Pada direktori proyek Flutter, jalankan:
+
+```bash
+flutter pub get
+dart run build_runner build
+```
+
+Untuk menjalankan aplikasi melalui Chrome:
+
+```bash
+flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:8000
+```
+
+Untuk menjalankan aplikasi melalui emulator Android:
+
+```bash
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000
+```
+
+Untuk memeriksa kualitas kode:
+
+```bash
+flutter analyze
+```
 
 ### Tugas 7
 1. Widget tree adalah struktur hierarkis yang menyusun antarmuka Flutter. Parent widget mengatur atau membungkus child widget. Contohnya, Scaffold memiliki AppBar dan body, sedangkan Column mengatur susunan widget anak secara vertikal.
@@ -71,3 +99,16 @@ AI Disclosure
 Saya memakai Gemini, saya berdiskuusi terkait pertanyaan reflektif dan penjelasannya dan template pengisian form untuk atribut start date dan end date
 Chat log AI: https://share.gemini.google/94TGl4e49Qfy
 
+
+### Tugas 9
+1. JsonSerializable mempermudah konversi objek Dart ke JSON dan sebaliknya. FieldRename.snake menyesuaikan nama atribut dengan Django, sedangkan includeToJson: false mencegah ID ikut dikirim saat POST. Contohnya, mencegah kesalahan penamaan startedAt menjadi started_at.
+
+2. Future diinisialisasi di initState() agar request API tidak berulang setiap widget mengalami rebuild. ApiException digunakan agar aplikasi dapat membedakan kegagalan request dengan data kosong serta menangani error berdasarkan status HTTP.
+
+3. SessionAuthentication menggunakan session dan cookie, sedangkan TokenAuthentication menggunakan token pada header Authorization. Keduanya tetap diaktifkan agar website Django dan aplikasi Flutter dapat melakukan autentikasi sesuai kebutuhan masing-masing.
+
+4. Job build memeriksa format, analisis kode, dan menjalankan pengujian, sedangkan build_apk menghasilkan APK release. Berkas *.g.dart tidak disimpan di Git karena dapat dihasilkan kembali secara otomatis menggunakan build_runner saat CI berjalan.
+
+AI Disclosure
+Saya memakai Gemini, saya berdiskuusi terkait pertanyaan reflektif dan penjelasannya dan template pengisian list dari tutorial sebelumnya
+Chat log AI: https://share.gemini.google/3DGFNEhRjKRu
